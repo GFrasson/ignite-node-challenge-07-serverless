@@ -27,7 +27,7 @@ const serverlessConfiguration: AWS = {
       events: [
         {
           http: {
-            path: "createTodo/{id}",
+            path: "todos/{userId}",
             method: "post",
             cors: true
           }
@@ -39,7 +39,7 @@ const serverlessConfiguration: AWS = {
       events: [
         {
           http: {
-            path: "listTodos/{id}",
+            path: "todos/{userId}",
             method: "get",
             cors: true
           }
@@ -82,13 +82,35 @@ const serverlessConfiguration: AWS = {
             {
               AttributeName: "id",
               AttributeType: "S"
-            }
+            },
+            {
+              AttributeName: "user_id",
+              AttributeType: "S"
+            },
           ],
+          GlobalSecondaryIndexes: [
+            {
+                IndexName: "User-index",
+                Projection: {
+                    ProjectionType: "ALL"
+                },
+                ProvisionedThroughput: {
+                    WriteCapacityUnits: 5,
+                    ReadCapacityUnits: 5
+                },
+                KeySchema: [
+                    {
+                        KeyType: "HASH",
+                        AttributeName: "user_id"
+                    }
+                ],
+            }
+        ],
           KeySchema: [
             {
               AttributeName: "id",
               KeyType: "HASH"
-            }
+            },
           ]
         }
       }
